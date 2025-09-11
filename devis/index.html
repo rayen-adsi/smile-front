@@ -414,13 +414,14 @@
   </div>
 
   <script>
-    // --- Config ---
-    const API_URL =
-      (location.port === '5500' || location.hostname === '127.0.0.1' || location.hostname === 'localhost')
-        ? 'http://localhost:3000/api/quotes/multipart'
-        : '/api/quotes/multipart';
+  // --- Config ---
+  const API_URL =
+    (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.port === '5500')
+      ? 'http://localhost:3001/api/quotes/multipart'
+      : 'https://smiletunisia.com/api/quotes/multipart';
 
-    const MAX_FILES = 10, MAX_SIZE = 10 * 1024 * 1024;
+  const MAX_FILES = 10, MAX_SIZE = 10 * 1024 * 1024;
+
 
     // --- Helpers ---
     function $(sel, el=document){ return el.querySelector(sel); }

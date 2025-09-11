@@ -19,22 +19,22 @@
   .card{background:var(--card);border:1px solid var(--gray);border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.06)}
   .toolbar{position:sticky;top:12px;z-index:10;display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0 16px;padding:12px;background:var(--card);border:1px solid var(--gray);border-radius:14px;backdrop-filter:saturate(140%) blur(4px)}
   select,input,button{font:inherit;border:1px solid var(--gray);border-radius:12px;padding:10px 12px;background:#fff}
-/* Buttons (works for <a> and <button>) */
-a.btn, button.btn{
-  display:inline-flex; align-items:center; gap:8px;
-  background:var(--turq); color:#063b3f;
-  border:none; font-weight:700; cursor:pointer;
-  padding:10px 12px; border-radius:12px;
-  text-decoration:none; transition:transform .04s ease, filter .12s ease;
-}
-a.btn:visited{ color:#063b3f; }
-a.btn:hover, button.btn:hover{ filter:brightness(0.97); }
-a.btn:active, button.btn:active{ transform:translateY(1px); }
+  /* Buttons (works for <a> and <button>) */
+  a.btn, button.btn{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--turq); color:#063b3f;
+    border:none; font-weight:700; cursor:pointer;
+    padding:10px 12px; border-radius:12px;
+    text-decoration:none; transition:transform .04s ease, filter .12s ease;
+  }
+  a.btn:visited{ color:#063b3f; }
+  a.btn:hover, button.btn:hover{ filter:brightness(0.97); }
+  a.btn:active, button.btn:active{ transform:translateY(1px); }
 
-/* (only if you use outlined variants elsewhere) */
-a.btn.secondary, button.btn.secondary{
-  background:#fff; border:2px solid var(--vio); color:var(--vio);
-}
+  /* (only if you use outlined variants elsewhere) */
+  a.btn.secondary, button.btn.secondary{
+    background:#fff; border:2px solid var(--vio); color:var(--vio);
+  }
 
   .login{max-width:420px;margin:60px auto;padding:18px}
   .row{display:flex;gap:10px}
@@ -111,69 +111,44 @@ a.btn.secondary, button.btn.secondary{
     .rowcard{grid-template-columns:auto 1fr .8fr .6fr .14fr}
     .grid2{grid-template-columns:1fr}
   }
+
   /* ---- Login card polish ---- */
-.login{
-  max-width: 540px;
-  margin: 64px auto;
-  padding: 22px;
-  background: linear-gradient(180deg,#ffffff, #f9fbff);
-  border-radius: 18px;
-  box-shadow: 0 18px 60px rgba(59,91,167,.12);
-}
+  .login{
+    max-width: 540px;
+    margin: 64px auto;
+    padding: 22px;
+    background: linear-gradient(180deg,#ffffff, #f9fbff);
+    border-radius: 18px;
+    box-shadow: 0 18px 60px rgba(59,91,167,.12);
+  }
+  .login .title{ font-size: 22px; margin: 0 0 6px; }
+  .login .subtitle{ margin: 0 0 10px; color: var(--muted); font-size: 13px; }
+  .login .stack{ gap: 12px; }
 
-.login .title{
-  font-size: 22px;
-  margin: 0 0 6px;
-}
+  .input-group{ position: relative; }
+  .input-group input{
+    width: 100%;
+    padding: 12px 40px 12px 40px;
+    border: 1.5px solid var(--gray);
+    border-radius: 12px;
+    background: #fff;
+    outline: none;
+    transition: border-color .12s ease, box-shadow .12s ease;
+  }
+  .input-group input:focus{
+    border-color: var(--vio);
+    box-shadow: 0 0 0 4px rgba(122,95,167,.12);
+  }
+  .field-icon{ position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: .6; font-size: 16px; user-select: none; }
+  .toggle-eye{ position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 12px; color: var(--muted); cursor: pointer; user-select: none; }
 
-.login .subtitle{
-  margin: 0 0 10px;
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.login .stack{ gap: 12px; }
-
-.input-group{
-  position: relative;
-}
-
-.input-group input{
-  width: 100%;
-  padding: 12px 40px 12px 40px; /* room for icons on both sides */
-  border: 1.5px solid var(--gray);
-  border-radius: 12px;
-  background: #fff;
-  outline: none;
-  transition: border-color .12s ease, box-shadow .12s ease;
-}
-.input-group input:focus{
-  border-color: var(--vio);
-  box-shadow: 0 0 0 4px rgba(122,95,167,.12);
-}
-
-.field-icon{
-  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-  opacity: .6; font-size: 16px; user-select: none;
-}
-.toggle-eye{
-  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-  font-size: 12px; color: var(--muted); cursor: pointer; user-select: none;
-}
-
-/* Top row with the back button */
-.login-head{
-  display:flex; align-items:center; gap:10px; margin-bottom:8px;
-}
-a.btn.ghost{
-  background:#fff; border:1.5px solid var(--vio); color: var(--vio);
-  text-decoration:none; padding:8px 12px; border-radius:12px;
-}
-a.btn.ghost:hover{ background: var(--lav); }
-
-/* Make the 3 buttons wrap nicely on small screens */
-.login .actions{ display:flex; gap:10px; flex-wrap:wrap; }
-
+  .login-head{ display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  a.btn.ghost{
+    background:#fff; border:1.5px solid var(--vio); color: var(--vio);
+    text-decoration:none; padding:8px 12px; border-radius:12px;
+  }
+  a.btn.ghost:hover{ background: var(--lav); }
+  .login .actions{ display:flex; gap:10px; flex-wrap:wrap; }
 </style>
 </head>
 <body>
@@ -183,38 +158,35 @@ a.btn.ghost:hover{ background: var(--lav); }
 
   <!-- LOGIN CARD -->
   <section id="loginCard" class="card login" style="display:none">
-  <div class="login-head">
-    <!-- If your homepage is in the parent folder, keep ../index.html.
-         If it’s in the same folder, change to index.html -->
-    <a href="../index.html" class="btn ghost" id="backBtn">← Retour au site</a>
-    <h3 class="title">Connexion</h3>
-  </div>
-  <p class="subtitle">Utilisez l’email et le mot de passe admin définis dans vos variables d’environnement.</p>
+    <div class="login-head">
+      <!-- If your homepage is in the parent folder, keep ../index.html.
+           If it’s in the same folder, change to index.html -->
+      <a href="../index.html" class="btn ghost" id="backBtn">← Retour au site</a>
+      <h3 class="title">Connexion</h3>
+    </div>
+    <p class="subtitle">Utilisez l’email et le mot de passe admin définis dans vos variables d’environnement.</p>
 
-  <div class="stack" style="margin-top:8px">
-    <div class="input-group">
-      <span class="field-icon">📧</span>
-      <input id="email" placeholder="adresse email" autocomplete="username">
+    <div class="stack" style="margin-top:8px">
+      <div class="input-group">
+        <span class="field-icon">📧</span>
+        <input id="email" placeholder="adresse email" autocomplete="username">
+      </div>
+
+      <div class="input-group">
+        <span class="field-icon">🔒</span>
+        <input id="password" placeholder="Mot de passe" type="password" autocomplete="current-password">
+        <span class="toggle-eye" id="togglePwd"></span>
+      </div>
     </div>
 
-    <div class="input-group">
-      <span class="field-icon">🔒</span>
-      <input id="password" placeholder="Mot de passe" type="password" autocomplete="current-password">
-      <span class="toggle-eye" id="togglePwd"></span>
+    <div class="actions" style="margin-top:12px">
+      <button class="btn" id="loginBtn">Se connecter</button>
+      <button class="btn secondary" id="clearBtn" type="button">Effacer</button>
+      <a href="../index.html" class="btn ghost">Retour</a>
     </div>
-  </div>
 
-  <div class="actions" style="margin-top:12px">
-    <button class="btn" id="loginBtn">Se connecter</button>
-    <button class="btn secondary" id="clearBtn" type="button">Effacer</button>
-    <!-- Optional second Retour button inside the card (kept for convenience).
-         Remove if you only want the top-left one. -->
-    <a href="../index.html" class="btn ghost">Retour</a>
-  </div>
-
-  <div id="loginMsg" class="note" style="margin-top:10px"></div>
-</section>
-
+    <div id="loginMsg" class="note" style="margin-top:10px"></div>
+  </section>
 
   <!-- MAIN UI -->
   <section id="app" style="display:none">
@@ -330,15 +302,27 @@ a.btn.ghost:hover{ background: var(--lav); }
 <div class="toast" id="toast"></div>
 
 <script>
-/* ------- Configurable BASE from ?base=... or previous choice ------- */
+/* ===== BASE resolution: dev vs prod =====
+   - ?base=... overrides and persists in localStorage
+   - localhost → http://localhost:3000
+   - otherwise → same-origin (''), so fetch('/api/...') on smiletunisia.com
+*/
 function resolveBase(){
   const p = new URLSearchParams(location.search);
   const fromQuery = p.get('base');
   if (fromQuery) { localStorage.setItem('adm_base', fromQuery); return fromQuery; }
-  return localStorage.getItem('adm_base') || 'http://localhost:3000';
+
+  const saved = localStorage.getItem('adm_base');
+  if (saved) return saved;
+
+  if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+    return 'http://localhost:3000';
+  }
+  return ''; // same-origin in production
 }
 let BASE = resolveBase();
 
+/* ------- Elements ------- */
 const els = {
   loginCard: document.getElementById('loginCard'),
   app: document.getElementById('app'),
@@ -381,7 +365,8 @@ const els = {
   toggleMode: document.getElementById('toggleMode'),
 };
 
-els.apiBadge.textContent = 'API: ' + BASE;
+/* Show where we're pointing */
+els.apiBadge.textContent = 'API: ' + (BASE ? BASE : 'same-origin (/api)');
 
 let token = localStorage.getItem('adm_token') || '';
 let offset = 0, lastCount = 0;
@@ -645,6 +630,7 @@ els.toggleMode.addEventListener('click', ()=>{
   localStorage.setItem('adm_drawer_mode', drawerMode);
   applyDrawerMode();
 });
+
 /* ---------- Save status (drawer) ---------- */
 async function saveQuoteStatus() {
   if (!currentId) return;
@@ -686,8 +672,6 @@ async function saveQuoteStatus() {
     els.saveStatus.disabled = false;
   }
 }
-
-// Hook the button and clear the inline message when the select changes
 els.saveStatus.addEventListener('click', saveQuoteStatus);
 els.dStatus.addEventListener('change', () => { els.saveMsg.textContent = ''; });
 
