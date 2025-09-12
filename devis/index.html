@@ -1395,20 +1395,7 @@ const API_URL  = `${API_BASE}/api/quotes/multipart`;
     // expose current strings for shims
     window.__I18N_Q = P;
 
-    // status text shim (translate whenever it changes)
-    const status = document.getElementById('status');
-    if (!status.__i18nObs){
-      const map = {
-        'Téléversement…':'statusUploading','Terminé':'statusDone','Erreur':'statusError',
-        'Uploading…':'statusUploading','Done':'statusDone','Error':'statusError'
-      };
-      const mo = new MutationObserver(()=> {
-        const val = status.textContent.trim();
-        const key = map[val]; if (key && __I18N_Q[key]) status.textContent = __I18N_Q[key];
-      });
-      mo.observe(status, {childList:true, subtree:true, characterData:true});
-      status.__i18nObs = mo;
-    }
+
   }
 
   /* ====== Shim showMessage so existing code shows localized text ====== */
