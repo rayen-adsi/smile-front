@@ -1054,3 +1054,22 @@ html[dir="rtl"] .prices .table td { text-align: right; }
   .t-badge{ font-size:11px; padding:6px 9px; }
   label{ font-size:15px; }
 }
+/* --- Fix card overflow inside the form on phones --- */
+@media (max-width: 680px){
+  /* allow grid items to actually shrink inside the columns */
+  .treat-grid > .tcard{ min-width: 0; }
+  .tcard .visual{ min-width: 0; }
+
+  /* let long labels break nicely instead of forcing width */
+  .tcard .visual b{ overflow-wrap: anywhere; word-break: break-word; }
+
+  /* tiny extra gutter + clip tile shadows so they don't look "outside" */
+  .form{ padding-inline: 16px; }
+  .treat-grid{ overflow: hidden; border-radius: 12px; padding: 2px; gap: 8px; }
+
+  /* keep two columns on phones; drop to one on very small screens */
+  .treat-grid{ grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 420px){
+  .treat-grid{ grid-template-columns: 1fr; }
+}
