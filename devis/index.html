@@ -485,7 +485,7 @@ const API_URL  = `${API_BASE}/api/quotes/multipart`;
       function pushFiles(files){
         for(const f of files){
           if (bag.length >= MAX_FILES) break;
-          if (f.size > MAX_SIZE){ showMessage('Un fichier dépasse 10 MB et a été ignoré.', true); continue; }
+          if (f.size > MAX_SIZE){ showMessage('Un fichier dépasse 10 MB et a été ignoré.', 'error');continue; }
           bag.push(f);
         }
         render(); syncInput();
@@ -1265,7 +1265,6 @@ const API_URL  = `${API_BASE}/api/quotes/multipart`;
   };
 
   /* ============ tiny helpers ============ */
-  const $ = (s,el=document)=>el.querySelector(s);
   const setText = (sel, txt)=>{ const el=$(sel); if(el && typeof txt==='string') el.textContent=txt; };
   const setHTML = (sel, html)=>{ const el=$(sel); if(el && typeof html==='string') el.innerHTML=html; };
   const setList = (sel, arr)=>{ const el=$(sel); if(el && Array.isArray(arr)) el.innerHTML=arr.map(x=>`<li>${x}</li>`).join(''); };
