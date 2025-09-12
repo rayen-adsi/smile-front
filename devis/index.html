@@ -415,10 +415,14 @@
 
   <script>
   // --- Config ---
-  const API_URL =
-    (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.port === '5500')
-      ? 'http://localhost:3001/api/quotes/multipart'
-      : 'https://smiletunisia.com/api/quotes/multipart';
+const isLocal = (
+  location.hostname === 'localhost' ||
+  location.hostname === '127.0.0.1' ||
+  location.port === '5500'
+);
+const API_BASE = isLocal ? 'http://localhost:3000' : 'https://api.smiletunisia.com';
+const API_URL  = `${API_BASE}/api/quotes/multipart`;
+
 
   const MAX_FILES = 10, MAX_SIZE = 10 * 1024 * 1024;
 
