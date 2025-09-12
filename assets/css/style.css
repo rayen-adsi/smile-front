@@ -1117,3 +1117,40 @@ html[dir="rtl"] .prices .table td { text-align: right; }
   .tcard .visual{ padding: 12px 14px; min-height: 54px; }
   .tcard .visual b{ font-size: 16px; }
 }
+/* ===== Fix treatment cards on mobile ===== */
+@media (max-width: 768px){
+  /* 1 column, full-width pills */
+  .treat-grid{
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .tcard, .tcard .visual{ min-width: 0; }
+  .tcard .visual{
+    border-radius: 999px;
+    padding: 14px 16px;
+    justify-content: flex-start;
+    gap: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,.05);
+  }
+
+  /* stop ugly word splitting */
+  .tcard .visual b{
+    font-size: 17px;
+    line-height: 1.25;
+    white-space: nowrap;           /* keep on one line */
+    word-break: keep-all;          /* do not split words */
+    overflow-wrap: normal;         /* no forced wrapping */
+    hyphens: none;                 /* disable auto-hyphenation */
+    text-overflow: ellipsis;       /* safety if someone zooms a lot */
+    overflow: hidden;
+  }
+
+  .ticon{ width: 24px; height: 24px; flex: 0 0 24px; }
+}
+
+/* Very small phones */
+@media (max-width: 360px){
+  .tcard .visual{ padding: 12px 14px; }
+  .tcard .visual b{ font-size: 16px; }
+}
