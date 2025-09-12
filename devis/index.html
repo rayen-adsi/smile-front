@@ -664,8 +664,13 @@ const API_URL  = `${API_BASE}/api/quotes/multipart`;
         fd.set('consent','true'); fd.delete('files');
         bag.forEach(f => fd.append('files', f));
 
-        submitBtn.disabled = true; bar.style.display='inline-block'; bar.value = 0; statusEl.textContent='Téléversement…';
-
+       submitBtn.disabled = true;
+ bar.style.display='inline-block';
+ bar.value = 0;
+ {
+   const P = (window.__I18N_Q || {statusUploading:'Téléversement…'});
+   statusEl.textContent = P.statusUploading;
+ }
         try{
           const xhr = new XMLHttpRequest();
           xhr.open('POST', API_URL, true);
@@ -690,13 +695,13 @@ const API_URL  = `${API_BASE}/api/quotes/multipart`;
           // Show the clean success modal
           showSuccessModal(ref);
 
-          statusEl.textContent='Terminé';
+          statusEl.textContent=(window.__I18N_Q||{statusDone:'Terminé'}).statusDone;
           bar.value = 0;
 
         }catch(err){
           console.error(err);
           showMessage('Désolé, une erreur est survenue. Réessayez.', 'error');
-          statusEl.textContent='Erreur';
+          statusEl.textContent=(window.__I18N_Q||{statusError:'Erreur'}).statusError;
         }finally{
           submitBtn.disabled = false;
           setTimeout(()=> bar.style.display='none', 800);
