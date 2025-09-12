@@ -149,6 +149,62 @@
   }
   a.btn.ghost:hover{ background: var(--lav); }
   .login .actions{ display:flex; gap:10px; flex-wrap:wrap; }
+  /* ===== Mobile polish ===== */
+@media (max-width: 680px){
+  /* Toolbar: simple grid, no sticky */
+  .toolbar{
+    position: static;
+    top: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 12px;
+  }
+  .toolbar select,
+  .toolbar input,
+  .toolbar button{ width:100% }
+  #statusFilter{ grid-column: 1 / -1; }        /* full width */
+  #search{ grid-column: 1 / -1; }              /* full width */
+  #limit{ max-width: 100px; }
+  #refreshBtn{ grid-column: 2; }
+  #logoutBtn{ grid-column: 1 / -1; }           /* full width at the bottom */
+
+  /* Row card becomes a tidy 2-col stack with named areas */
+  .rowcard{
+    grid-template-columns: 46px 1fr;
+    grid-template-areas:
+      "av name"
+      "av trt"
+      "av st"
+      "av dt";
+    gap: 8px;
+    padding: 10px;
+  }
+  .rowcard > :nth-child(1){ grid-area: av; }    /* avatar */
+  .rowcard > :nth-child(2){ grid-area: name; }  /* name + snippet */
+  .rowcard > :nth-child(3){ grid-area: trt; }   /* treatment pill */
+  .rowcard > :nth-child(4){ grid-area: st; }    /* status badge */
+  .rowcard > :nth-child(5){
+    grid-area: dt;                               /* date (right) */
+    justify-self: end;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* Make badges/pills a touch smaller so they don’t wrap awkwardly */
+  .status{ padding: 4px 8px; font-size: 11px; }
+  .pill{ padding: 6px 10px; font-size: 11px; }
+
+  /* Cards + chips spacing */
+  .card{ border-radius: 12px; }
+  .chips{ gap: 6px; }
+
+  /* Two-column KPIs already set in your CSS, keep smaller text */
+  .kpi b{ font-size: 18px; }
+  .kpi small{ font-size: 11px; }
+}
+
 </style>
 </head>
 <body>
