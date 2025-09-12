@@ -1073,33 +1073,47 @@ html[dir="rtl"] .prices .table td { text-align: right; }
 @media (max-width: 420px){
   .treat-grid{ grid-template-columns: 1fr; }
 }
-/* Keep words intact on the treatment tiles */
-.tcard .visual b{
-  white-space: normal;
-  word-break: normal;         /* don't split inside words */
-  overflow-wrap: break-word;  /* only break at natural points (spaces, hyphens) */
-  hyphens: auto;              /* nicer hyphenation (uses <html lang="fr">) */
-  line-height: 1.2;
-}
-
-/* Make the grid adapt: 2 columns when there's room, 1 column when not */
-@media (max-width: 900px){
+/* --- Mobile: make treatment choices look like pill buttons --- */
+@media (max-width: 540px){
+  /* one column */
   .treat-grid{
-    /* auto-fit + minmax lets it drop to 1 column automatically if too narrow */
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 10px;
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
-  /* allow tiles to actually shrink inside the column */
-  .treat-grid > .tcard{ min-width: 0; }
-  .tcard .visual{ min-width: 0; }
-
-  /* small visual tweaks for tight screens */
-  .tcard .visual b{ font-size: clamp(15px, 4.2vw, 17px); }
-  .ticon{ width:24px; height:24px; }
+  /* pill look */
+  .tcard .visual{
+    border-radius: 999px;
+    padding: 14px 16px;
+    min-height: 58px;
+    justify-content: flex-start;
+    gap: 12px;
+    background: #fff;
+    border: 1.5px solid #e6e6f0;
+    box-shadow: 0 6px 18px rgba(0,0,0,.05);
+  }
+  /* selected state */
+  .tcard input:checked + .visual{
+    background: var(--lav);           /* your light violet */
+    border-color: var(--turq);
+    box-shadow: 0 10px 26px rgba(90,195,204,.25);
+    color: #0a2d30;
+  }
+  /* icon + label sizing */
+  .ticon{ width: 24px; height: 24px; }
+  .tcard .visual b{
+    font-size: 17px;
+    line-height: 1.2;
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: break-word;  /* break only at spaces/hyphens */
+    hyphens: auto;
+  }
+  /* allow content to shrink inside the pill */
+  .treat-grid > .tcard, .tcard .visual{ min-width: 0; }
 }
 
-/* Very small phones */
+/* Small phones: slightly tighter */
 @media (max-width: 360px){
-  .treat-grid{ grid-template-columns: 1fr; } /* hard force 1 column */
-  .tcard .visual b{ font-size: 15px; }
+  .tcard .visual{ padding: 12px 14px; min-height: 54px; }
+  .tcard .visual b{ font-size: 16px; }
 }
