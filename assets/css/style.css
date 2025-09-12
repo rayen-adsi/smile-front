@@ -1073,3 +1073,33 @@ html[dir="rtl"] .prices .table td { text-align: right; }
 @media (max-width: 420px){
   .treat-grid{ grid-template-columns: 1fr; }
 }
+/* Keep words intact on the treatment tiles */
+.tcard .visual b{
+  white-space: normal;
+  word-break: normal;         /* don't split inside words */
+  overflow-wrap: break-word;  /* only break at natural points (spaces, hyphens) */
+  hyphens: auto;              /* nicer hyphenation (uses <html lang="fr">) */
+  line-height: 1.2;
+}
+
+/* Make the grid adapt: 2 columns when there's room, 1 column when not */
+@media (max-width: 900px){
+  .treat-grid{
+    /* auto-fit + minmax lets it drop to 1 column automatically if too narrow */
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  /* allow tiles to actually shrink inside the column */
+  .treat-grid > .tcard{ min-width: 0; }
+  .tcard .visual{ min-width: 0; }
+
+  /* small visual tweaks for tight screens */
+  .tcard .visual b{ font-size: clamp(15px, 4.2vw, 17px); }
+  .ticon{ width:24px; height:24px; }
+}
+
+/* Very small phones */
+@media (max-width: 360px){
+  .treat-grid{ grid-template-columns: 1fr; } /* hard force 1 column */
+  .tcard .visual b{ font-size: 15px; }
+}
