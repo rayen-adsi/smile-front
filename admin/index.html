@@ -629,6 +629,18 @@ function renderRows(rows){
     const arrow = document.createElement('div'); arrow.textContent = '›'; arrow.style.textAlign='right'; arrow.style.fontWeight='700';
 
     wrap.append(avatar,name,trt,st,dt);
+    // quick delete button (optional)
+const del = document.createElement('button');
+del.className = 'icon-del';
+del.textContent = '🗑️';
+del.title = 'Supprimer ce devis';
+del.addEventListener('click', (e)=>{
+  e.stopPropagation();         // don’t open the drawer
+  currentId = r.id;
+  deleteCurrentQuote();
+});
+wrap.append(del);
+
     td.append(wrap); tr.append(td);
     els.rows.append(tr);
   });
