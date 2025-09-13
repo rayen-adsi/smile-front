@@ -204,6 +204,23 @@
   .kpi b{ font-size: 18px; }
   .kpi small{ font-size: 11px; }
 }
+/* Danger variant */
+a.btn.danger, button.btn.danger{
+  background: var(--danger);
+  color: #fff;
+}
+a.btn.danger:hover, button.btn.danger:hover{ filter: brightness(.96); }
+
+/* (optional) small trash icon on each rowcard – if you enable Option B below */
+.rowcard{ position: relative; }
+.icon-del{
+  position:absolute; right:8px; top:8px;
+  background:#fff; border:1px solid var(--gray);
+  border-radius:8px; padding:6px 8px; cursor:pointer;
+  font-weight:800;
+  box-shadow:0 6px 18px rgba(0,0,0,.06);
+}
+.icon-del:hover{ background:#fee2e2; border-color:#fecaca }
 
 </style>
 </head>
@@ -329,27 +346,33 @@
       </div>
 
       <div class="card" style="padding:12px">
-        <b>Statut</b>
-        <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
-          <select id="dStatus">
-            <option value="pending">En attente</option>
-            <option value="reviewing">En cours d’étude</option>
-            <option value="quoted">Devis envoyé</option>
-            <option value="scheduled">Programmé</option>
-            <option value="closed">Clôturé</option>
-            <option value="cancelled">Annulé</option>
-          </select>
-          <button class="btn" id="saveStatus">Mettre à jour</button>
-          <span id="saveMsg" class="note"></span>
-        </div>
+  <b>Statut</b>
+  <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
+    <select id="dStatus">
+      <option value="pending">En attente</option>
+      <option value="reviewing">En cours d’étude</option>
+      <option value="quoted">Devis envoyé</option>
+      <option value="scheduled">Programmé</option>
+      <option value="closed">Clôturé</option>
+      <option value="cancelled">Annulé</option>
+    </select>
+    <button class="btn" id="saveStatus">Mettre à jour</button>
+    <span id="saveMsg" class="note"></span>
+  </div>
 
-        <div style="margin-top:14px">
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <b>Fichiers</b>
-            <button id="openAll" class="btn secondary" type="button">Tout ouvrir</button>
-          </div>
-          <div id="dFiles" class="stack" style="margin-top:8px"></div>
-        </div>
+  <div style="margin-top:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <b>Fichiers</b>
+      <button id="openAll" class="btn secondary" type="button">Tout ouvrir</button>
+    </div>
+    <div id="dFiles" class="stack" style="margin-top:8px"></div>
+  </div>
+
+  <!-- NEW: destructive action -->
+  <div class="row-actions" style="margin-top:14px;justify-content:flex-end">
+    <button id="deleteQuoteBtn" class="btn danger" type="button">🗑️ Supprimer ce devis</button>
+  </div>
+</div>
       </div>
     </div>
   </div>
@@ -363,6 +386,23 @@
    - localhost → http://localhost:3000
    - otherwise → same-origin (''), so fetch('/api/...') on smiletunisia.com
 */
+async function apiDelete(path){
+  const res = await fetch(BASE + path, {
+    method: 'DELETE',
+    headers: {
+      ...(token ? { Authorization: 'Bearer ' + token } : {})
+    }
+  });
+  if (res.status === 401) { logout(); throw new Error('401'); }
+  if (!res.ok) {
+    // try to read error text; if empty, throw generic
+    const t = await res.text().catch(()=> '');
+    throw new Error(t || ('HTTP ' + res.status));
+  }
+  // some APIs return 204 No Content; just return an object
+  try { return await res.json(); } catch { return { ok:true }; }
+}
+
 function resolveBase(){
   const p = new URLSearchParams(location.search);
   const fromQuery = p.get('base');
@@ -418,6 +458,7 @@ const els = {
   kpiReviewing: document.getElementById('kpiReviewing'),
   kpiScheduled: document.getElementById('kpiScheduled'),
   kpiQuoted: document.getElementById('kpiQuoted'),
+  deleteQuoteBtn: document.getElementById('deleteQuoteBtn'),
   toggleMode: document.getElementById('toggleMode'),
 };
 
@@ -641,7 +682,7 @@ async function openDrawer(id){
     const anchors = els.dFiles.querySelectorAll('a.btn');
     anchors.forEach(a => window.open(a.href,'_blank'));
   };
-
+  els.deleteQuoteBtn.onclick = () => deleteCurrentQuote();
   applyDrawerMode();                 // apply current mode
   els.drawer.classList.add('show');  // show
 }
@@ -726,6 +767,33 @@ async function saveQuoteStatus() {
     toastMsg('Erreur de mise à jour');
   } finally {
     els.saveStatus.disabled = false;
+  }
+}
+async function deleteCurrentQuote(){
+  if (!currentId) return;
+  const sure = confirm('Supprimer définitivement ce devis ? Cette action est irréversible.');
+  if (!sure) return;
+
+  try{
+    await apiDelete(`/api/admin/quotes/${currentId}`);
+    toastMsg('Devis supprimé');
+    closeDrawer();
+    await load();
+  }catch(err){
+    console.error('DELETE failed:', err);
+    // Optional fallback: if hard delete not supported, archive it by setting status=cancelled
+    try{
+      await api(`/api/admin/quotes/${currentId}`, {
+        method:'PATCH',
+        body: JSON.stringify({ status: 'cancelled' })
+      });
+      toastMsg('Endpoint DELETE indisponible — devis archivé (statut “Annulé”).');
+      closeDrawer();
+      await load();
+    }catch(e2){
+      console.error('Archive fallback failed:', e2);
+      alert('Suppression impossible. Vérifiez que l’API supporte DELETE /api/admin/quotes/:id');
+    }
   }
 }
 els.saveStatus.addEventListener('click', saveQuoteStatus);
