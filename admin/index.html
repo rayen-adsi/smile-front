@@ -19,7 +19,8 @@
   .card{background:var(--card);border:1px solid var(--gray);border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.06)}
   .toolbar{position:sticky;top:12px;z-index:10;display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0 16px;padding:12px;background:var(--card);border:1px solid var(--gray);border-radius:14px;backdrop-filter:saturate(140%) blur(4px)}
   select,input,button{font:inherit;border:1px solid var(--gray);border-radius:12px;padding:10px 12px;background:#fff}
-  /* Buttons (works for <a> and <button>) */
+
+  /* Buttons */
   a.btn, button.btn{
     display:inline-flex; align-items:center; gap:8px;
     background:var(--turq); color:#063b3f;
@@ -31,10 +32,11 @@
   a.btn:hover, button.btn:hover{ filter:brightness(0.97); }
   a.btn:active, button.btn:active{ transform:translateY(1px); }
 
-  /* (only if you use outlined variants elsewhere) */
   a.btn.secondary, button.btn.secondary{
     background:#fff; border:2px solid var(--vio); color:var(--vio);
   }
+  a.btn.danger, button.btn.danger{ background:var(--danger); color:#fff; }
+  a.btn.danger:hover, button.btn.danger:hover{ filter:brightness(.98); }
 
   .login{max-width:420px;margin:60px auto;padding:18px}
   .row{display:flex;gap:10px}
@@ -51,8 +53,14 @@
   .chip.active{background:var(--blue);border-color:var(--blue);color:#fff}
   .table{width:100%;border-collapse:separate;border-spacing:0 8px}
   .table th{font-size:12px;color:var(--muted);text-align:left;padding:0 10px}
-  .rowcard{display:grid;grid-template-columns:auto 1fr .8fr .6fr .14fr;gap:10px;align-items:center;
-           padding:12px;background:#fff;border:1px solid var(--gray);border-radius:14px;transition:box-shadow .15s ease,transform .02s}
+
+  .rowcard{
+    position:relative;
+    display:grid;grid-template-columns:auto 1fr .8fr .6fr .14fr;
+    gap:10px;align-items:center;
+    padding:12px;background:#fff;border:1px solid var(--gray);border-radius:14px;
+    transition:box-shadow .15s ease,transform .02s
+  }
   .rowcard:hover{box-shadow:0 8px 20px rgba(59,91,167,.10)}
   .avatar{width:36px;height:36px;border-radius:999px;display:grid;place-items:center;background:var(--lav);color:var(--blue);font-weight:800}
   .status{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;font-weight:700;font-size:12px;text-transform:capitalize}
@@ -74,19 +82,24 @@
   .toast{position:fixed;right:16px;bottom:16px;background:#111827;color:#fff;padding:10px 12px;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,.25);display:none}
   .close{position:absolute;right:10px;top:10px;border:none;background:#eee;border-radius:999px;width:32px;height:32px;cursor:pointer}
 
-  /* ===== Drawer layouts: right (wide), center (page), full ===== */
+  /* quick hide icon on row */
+  .icon-hide{
+    position:absolute; right:8px; top:8px;
+    background:#fff; border:1px solid var(--gray);
+    border-radius:8px; padding:6px 8px; cursor:pointer;
+    font-weight:800;
+    box-shadow:0 6px 18px rgba(0,0,0,.06);
+  }
+  .icon-hide:hover{ background:#fee2e2; border-color:#fecaca }
+
+  /* ===== Drawer layouts ===== */
   .drawer{position:fixed; inset:0; z-index:40; background:rgba(0,0,0,.45); display:none;}
   .drawer.show{display:flex;}
   .drawer .panel{position:relative; background:#fff; padding:16px 18px; overflow:auto;}
 
-  /* Docked right (wide) */
   .drawer.mode-right{ justify-content:flex-end; align-items:stretch; }
-  .drawer.mode-right .panel{
-    width:min(860px,96vw); height:100%;
-    border-left:1px solid var(--gray); border-radius:0;
-  }
+  .drawer.mode-right .panel{ width:min(860px,96vw); height:100%; border-left:1px solid var(--gray); }
 
-  /* Centered “page” modal */
   .drawer.mode-center{ justify-content:center; align-items:center; }
   .drawer.mode-center .panel{
     width:min(980px,96vw); height:min(92vh, 920px);
@@ -94,11 +107,9 @@
     box-shadow:0 24px 80px rgba(0,0,0,.25);
   }
 
-  /* Full-screen */
   .drawer.mode-full{ justify-content:center; align-items:center; }
   .drawer.mode-full .panel{ width:100vw; height:100vh; border:none; border-radius:0; }
 
-  /* Header actions */
   .head{ display:flex; align-items:center; gap:8px; }
   .head h3{ flex:1; margin:0; }
   .iconbtn{
@@ -149,79 +160,49 @@
   }
   a.btn.ghost:hover{ background: var(--lav); }
   .login .actions{ display:flex; gap:10px; flex-wrap:wrap; }
+
   /* ===== Mobile polish ===== */
-@media (max-width: 680px){
-  /* Toolbar: simple grid, no sticky */
-  .toolbar{
-    position: static;
-    top: auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    padding: 10px;
-    border-radius: 12px;
+  @media (max-width: 680px){
+    .toolbar{
+      position: static;
+      top: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 10px;
+      border-radius: 12px;
+    }
+    .toolbar select,.toolbar input,.toolbar button{ width:100% }
+    #statusFilter{ grid-column: 1 / -1; }
+    #search{ grid-column: 1 / -1; }
+    #limit{ max-width: 100px; }
+    #refreshBtn{ grid-column: 2; }
+    #logoutBtn{ grid-column: 1 / -1; }
+
+    .rowcard{
+      grid-template-columns: 46px 1fr;
+      grid-template-areas:
+        "av name"
+        "av trt"
+        "av st"
+        "av dt";
+      gap: 8px;
+      padding: 10px;
+    }
+    .rowcard > :nth-child(1){ grid-area: av; }
+    .rowcard > :nth-child(2){ grid-area: name; }
+    .rowcard > :nth-child(3){ grid-area: trt; }
+    .rowcard > :nth-child(4){ grid-area: st; }
+    .rowcard > :nth-child(5){
+      grid-area: dt; justify-self: end; font-size: 12px; color: var(--muted);
+    }
+    .status{ padding: 4px 8px; font-size: 11px; }
+    .pill{ padding: 6px 10px; font-size: 11px; }
+    .card{ border-radius: 12px; }
+    .chips{ gap: 6px; }
+    .kpi b{ font-size: 18px; }
+    .kpi small{ font-size: 11px; }
   }
-  .toolbar select,
-  .toolbar input,
-  .toolbar button{ width:100% }
-  #statusFilter{ grid-column: 1 / -1; }        /* full width */
-  #search{ grid-column: 1 / -1; }              /* full width */
-  #limit{ max-width: 100px; }
-  #refreshBtn{ grid-column: 2; }
-  #logoutBtn{ grid-column: 1 / -1; }           /* full width at the bottom */
-
-  /* Row card becomes a tidy 2-col stack with named areas */
-  .rowcard{
-    grid-template-columns: 46px 1fr;
-    grid-template-areas:
-      "av name"
-      "av trt"
-      "av st"
-      "av dt";
-    gap: 8px;
-    padding: 10px;
-  }
-  .rowcard > :nth-child(1){ grid-area: av; }    /* avatar */
-  .rowcard > :nth-child(2){ grid-area: name; }  /* name + snippet */
-  .rowcard > :nth-child(3){ grid-area: trt; }   /* treatment pill */
-  .rowcard > :nth-child(4){ grid-area: st; }    /* status badge */
-  .rowcard > :nth-child(5){
-    grid-area: dt;                               /* date (right) */
-    justify-self: end;
-    font-size: 12px;
-    color: var(--muted);
-  }
-
-  /* Make badges/pills a touch smaller so they don’t wrap awkwardly */
-  .status{ padding: 4px 8px; font-size: 11px; }
-  .pill{ padding: 6px 10px; font-size: 11px; }
-
-  /* Cards + chips spacing */
-  .card{ border-radius: 12px; }
-  .chips{ gap: 6px; }
-
-  /* Two-column KPIs already set in your CSS, keep smaller text */
-  .kpi b{ font-size: 18px; }
-  .kpi small{ font-size: 11px; }
-}
-/* Danger variant */
-a.btn.danger, button.btn.danger{
-  background: var(--danger);
-  color: #fff;
-}
-a.btn.danger:hover, button.btn.danger:hover{ filter: brightness(.96); }
-
-/* (optional) small trash icon on each rowcard – if you enable Option B below */
-.rowcard{ position: relative; }
-.icon-del{
-  position:absolute; right:8px; top:8px;
-  background:#fff; border:1px solid var(--gray);
-  border-radius:8px; padding:6px 8px; cursor:pointer;
-  font-weight:800;
-  box-shadow:0 6px 18px rgba(0,0,0,.06);
-}
-.icon-del:hover{ background:#fee2e2; border-color:#fecaca }
-
 </style>
 </head>
 <body>
@@ -232,8 +213,6 @@ a.btn.danger:hover, button.btn.danger:hover{ filter: brightness(.96); }
   <!-- LOGIN CARD -->
   <section id="loginCard" class="card login" style="display:none">
     <div class="login-head">
-      <!-- If your homepage is in the parent folder, keep ../index.html.
-           If it’s in the same folder, change to index.html -->
       <a href="../index.html" class="btn ghost" id="backBtn">← Retour au site</a>
       <h3 class="title">Connexion</h3>
     </div>
@@ -293,6 +272,12 @@ a.btn.danger:hover, button.btn.danger:hover{ filter: brightness(.96); }
       <input id="search" placeholder="Rechercher (nom, email, notes)…" style="min-width:260px">
       <select id="limit"><option>20</option><option>50</option><option>100</option></select>
       <button class="btn" id="refreshBtn" title="Actualiser (F5)">Actualiser</button>
+
+      <!-- NEW: show hidden toggle -->
+      <label class="tiny" style="display:flex;align-items:center;gap:6px">
+        <input type="checkbox" id="showHidden"> Afficher masqués
+      </label>
+
       <div style="flex:1"></div>
       <button class="btn secondary" id="logoutBtn">Déconnexion</button>
     </div>
@@ -346,33 +331,33 @@ a.btn.danger:hover, button.btn.danger:hover{ filter: brightness(.96); }
       </div>
 
       <div class="card" style="padding:12px">
-  <b>Statut</b>
-  <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
-    <select id="dStatus">
-      <option value="pending">En attente</option>
-      <option value="reviewing">En cours d’étude</option>
-      <option value="quoted">Devis envoyé</option>
-      <option value="scheduled">Programmé</option>
-      <option value="closed">Clôturé</option>
-      <option value="cancelled">Annulé</option>
-    </select>
-    <button class="btn" id="saveStatus">Mettre à jour</button>
-    <span id="saveMsg" class="note"></span>
-  </div>
+        <b>Statut</b>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
+          <select id="dStatus">
+            <option value="pending">En attente</option>
+            <option value="reviewing">En cours d’étude</option>
+            <option value="quoted">Devis envoyé</option>
+            <option value="scheduled">Programmé</option>
+            <option value="closed">Clôturé</option>
+            <option value="cancelled">Annulé</option>
+          </select>
+          <button class="btn" id="saveStatus">Mettre à jour</button>
+          <span id="saveMsg" class="note"></span>
+        </div>
 
-  <div style="margin-top:14px">
-    <div style="display:flex;align-items:center;justify-content:space-between">
-      <b>Fichiers</b>
-      <button id="openAll" class="btn secondary" type="button">Tout ouvrir</button>
-    </div>
-    <div id="dFiles" class="stack" style="margin-top:8px"></div>
-  </div>
+        <div style="margin-top:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <b>Fichiers</b>
+            <button id="openAll" class="btn secondary" type="button">Tout ouvrir</button>
+          </div>
+          <div id="dFiles" class="stack" style="margin-top:8px"></div>
+        </div>
 
-  <!-- NEW: destructive action -->
-  <div class="row-actions" style="margin-top:14px;justify-content:flex-end">
-    <button id="deleteQuoteBtn" class="btn danger" type="button">🗑️ Supprimer ce devis</button>
-  </div>
-</div>
+        <!-- NEW: local hide / restore -->
+        <div class="row-actions" style="margin-top:14px;justify-content:flex-end">
+          <button id="hideBtn" class="btn danger" type="button">🗑️ Masquer (localement)</button>
+          <button id="unhideBtn" class="btn secondary" type="button" style="display:none">↩ Restaurer</button>
+        </div>
       </div>
     </div>
   </div>
@@ -381,41 +366,7 @@ a.btn.danger:hover, button.btn.danger:hover{ filter: brightness(.96); }
 <div class="toast" id="toast"></div>
 
 <script>
-/* ===== BASE resolution: dev vs prod =====
-   - ?base=... overrides and persists in localStorage
-   - localhost → http://localhost:3000
-   - otherwise → same-origin (''), so fetch('/api/...') on smiletunisia.com
-*/
-async function apiDelete(path){
-  const res = await fetch(BASE + path, {
-    method: 'DELETE',
-    headers: {
-      ...(token ? { Authorization: 'Bearer ' + token } : {})
-    }
-  });
-  if (res.status === 401) { logout(); throw new Error('401'); }
-  if (!res.ok) {
-    // try to read error text; if empty, throw generic
-    const t = await res.text().catch(()=> '');
-    throw new Error(t || ('HTTP ' + res.status));
-  }
-  // some APIs return 204 No Content; just return an object
-  try { return await res.json(); } catch { return { ok:true }; }
-}
-async function apiPost(path, body){
-  const res = await fetch(BASE + path, {
-    method: 'POST',
-    headers: {
-      ...(token ? { Authorization: 'Bearer ' + token } : {}),
-      'Content-Type': 'application/json'
-    },
-    body: body ? JSON.stringify(body) : null
-  });
-  if (res.status === 401){ logout(); throw new Error('401'); }
-  if (!res.ok) throw new Error(await res.text());
-  try { return await res.json(); } catch { return { ok:true }; }
-}
-
+/* ===== BASE resolution: dev vs prod ===== */
 function resolveBase(){
   const p = new URLSearchParams(location.search);
   const fromQuery = p.get('base');
@@ -471,8 +422,10 @@ const els = {
   kpiReviewing: document.getElementById('kpiReviewing'),
   kpiScheduled: document.getElementById('kpiScheduled'),
   kpiQuoted: document.getElementById('kpiQuoted'),
-  deleteQuoteBtn: document.getElementById('deleteQuoteBtn'),
   toggleMode: document.getElementById('toggleMode'),
+  showHidden: document.getElementById('showHidden'),
+  hideBtn: document.getElementById('hideBtn'),
+  unhideBtn: document.getElementById('unhideBtn'),
 };
 
 /* Show where we're pointing */
@@ -483,13 +436,22 @@ let offset = 0, lastCount = 0;
 let currentId = null;
 
 /* ---------- Drawer mode ---------- */
-// 'mode-right' | 'mode-center' | 'mode-full'
-let drawerMode = localStorage.getItem('adm_drawer_mode') || 'mode-center'; // default centered
-
+let drawerMode = localStorage.getItem('adm_drawer_mode') || 'mode-center';
 function applyDrawerMode(){
   els.drawer.classList.remove('mode-right','mode-center','mode-full');
   els.drawer.classList.add(drawerMode);
 }
+
+/* ---------- Local Hide Store ---------- */
+const HIDDEN_KEY = 'adm_hidden_ids';
+function loadHidden(){
+  try { return new Set(JSON.parse(localStorage.getItem(HIDDEN_KEY) || '[]')); }
+  catch { return new Set(); }
+}
+function saveHidden(set){
+  localStorage.setItem(HIDDEN_KEY, JSON.stringify([...set]));
+}
+let hiddenIds = loadHidden();
 
 /* ---------- Helpers ---------- */
 function statusClass(s){
@@ -530,7 +492,6 @@ function toastMsg(msg){
   els.toast.style.display='block';
   setTimeout(()=> els.toast.style.display='none', 1800);
 }
-function phoneLink(num){ if(!num) return '#'; const d = (''+num).replace(/\D/g,''); return 'tel:+'+d; }
 function waLink(num){ if(!num) return '#'; const d = (''+num).replace(/\D/g,''); return 'https://wa.me/'+d; }
 
 /* ---------- View switch ---------- */
@@ -596,10 +557,15 @@ async function load(){
   qs.set('limit', els.limit.value);
   qs.set('offset', offset);
 
-  const data = await api('/api/admin/quotes?' + qs.toString());
+  let data = await api('/api/admin/quotes?' + qs.toString());
+
+  // Local hide filter
+  const showHidden = !!els.showHidden.checked;
+  if (!showHidden) data = data.filter(r => !hiddenIds.has(r.id));
+
   lastCount = data.length;
   els.countBadge.textContent = `${lastCount} devis (page)`;
-  renderRows(data);
+  renderRows(data, { showHidden });
   updateKpis(data);
 }
 
@@ -612,7 +578,8 @@ function updateKpis(rows){
   els.kpiQuoted.textContent = by('quoted');
 }
 
-function renderRows(rows){
+function renderRows(rows, opts = {}){
+  const showHidden = !!opts.showHidden;
   els.rows.innerHTML = '';
   els.empty.style.display = rows.length ? 'none' : '';
   rows.forEach(r=>{
@@ -620,13 +587,16 @@ function renderRows(rows){
     const td = document.createElement('td'); td.colSpan = 5;
 
     const wrap = document.createElement('div'); wrap.className = 'rowcard click';
+    if (showHidden && hiddenIds.has(r.id)) wrap.style.opacity = .45;
+
     wrap.addEventListener('click', ()=> openDrawer(r.id));
 
     const avatar = document.createElement('div'); avatar.className='avatar';
     avatar.textContent = (r.name||'?').trim().charAt(0).toUpperCase();
 
     const name = document.createElement('div');
-    name.innerHTML = `<b>${r.name||'—'}</b>
+    const hiddenTag = (showHidden && hiddenIds.has(r.id)) ? ' <span class="tiny">(masqué)</span>' : '';
+    name.innerHTML = `<b>${(r.name||'—')}${hiddenTag}</b>
       <div class="tiny">${r.email||''}</div>
       <div class="note">${(r.snippet||'').replace(/\n/g,' ')}</div>`;
 
@@ -639,21 +609,18 @@ function renderRows(rows){
     const dt = document.createElement('div');
     dt.innerHTML = `<span class="note" title="${fmtDate(r.created_at)}">${relTime(r.created_at)}</span>`;
 
-    const arrow = document.createElement('div'); arrow.textContent = '›'; arrow.style.textAlign='right'; arrow.style.fontWeight='700';
+    // quick local hide button
+    const hide = document.createElement('button');
+    hide.className = 'icon-hide';
+    hide.textContent = '🗑️';
+    hide.title = 'Masquer (localement)';
+    hide.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      currentId = r.id;
+      hideCurrentQuote();
+    });
 
-    wrap.append(avatar,name,trt,st,dt);
-    // quick delete button (optional)
-const del = document.createElement('button');
-del.className = 'icon-del';
-del.textContent = '🗑️';
-del.title = 'Supprimer ce devis';
-del.addEventListener('click', (e)=>{
-  e.stopPropagation();         // don’t open the drawer
-  currentId = r.id;
-  deleteCurrentQuote();
-});
-wrap.append(del);
-
+    wrap.append(avatar,name,trt,st,dt,hide);
     td.append(wrap); tr.append(td);
     els.rows.append(tr);
   });
@@ -707,14 +674,43 @@ async function openDrawer(id){
     const anchors = els.dFiles.querySelectorAll('a.btn');
     anchors.forEach(a => window.open(a.href,'_blank'));
   };
-  els.deleteQuoteBtn.onclick = () => deleteCurrentQuote();
-  applyDrawerMode();                 // apply current mode
-  els.drawer.classList.add('show');  // show
+
+  // toggle hide/restore
+  const isHidden = hiddenIds.has(id);
+  els.hideBtn.style.display = isHidden ? 'none' : '';
+  els.unhideBtn.style.display = isHidden ? '' : '';
+  els.hideBtn.onclick = hideCurrentQuote;
+  els.unhideBtn.onclick = unhideCurrentQuote;
+
+  applyDrawerMode();
+  els.drawer.classList.add('show');
 }
 
 function closeDrawer(){
   els.drawer.classList.remove('show');
   currentId = null;
+}
+
+/* ---------- Local hide actions ---------- */
+function hideCurrentQuote(){
+  if (!currentId) return;
+  if (!confirm('Masquer ce devis dans CETTE interface (local, non définitif) ?')) return;
+  hiddenIds.add(currentId);
+  saveHidden(hiddenIds);
+  toastMsg('Devis masqué (local)');
+  closeDrawer();
+  load();
+}
+
+function unhideCurrentQuote(){
+  if (!currentId) return;
+  hiddenIds.delete(currentId);
+  saveHidden(hiddenIds);
+  toastMsg('Devis restauré');
+  // keep drawer open, just flip buttons
+  els.hideBtn.style.display = '';
+  els.unhideBtn.style.display = 'none';
+  load();
 }
 
 /* ---------- Events ---------- */
@@ -737,6 +733,7 @@ els.prev.addEventListener('click', ()=>{ offset=Math.max(0, offset-parseInt(els.
 els.next.addEventListener('click', ()=>{ offset += parseInt(els.limit.value); load(); });
 els.closeDrawer.addEventListener('click', closeDrawer);
 els.drawer.addEventListener('click', e=>{ if(e.target===els.drawer) closeDrawer(); });
+els.showHidden.addEventListener('change', ()=>{ offset=0; load(); });
 
 // keyboard shortcuts
 window.addEventListener('keydown', (e)=>{
@@ -780,10 +777,7 @@ async function saveQuoteStatus() {
     els.saveMsg.textContent = 'Statut mis à jour ✔';
     toastMsg('Statut mis à jour');
 
-    // Refresh table + KPIs
     await load();
-
-    // Optionally refresh the drawer details so updated_at changes
     await openDrawer(currentId);
 
   } catch (err) {
@@ -794,55 +788,6 @@ async function saveQuoteStatus() {
     els.saveStatus.disabled = false;
   }
 }
-async function deleteCurrentQuote(){
-  if (!currentId) return;
-  if (!confirm('Supprimer définitivement ce devis ? Cette action est irréversible.\n(En cas d’échec, il sera archivé.)')) return;
-
-  const id = currentId;
-  let mode = null;  // 'hard' | 'soft' | 'archived'
-  let lastErr = null;
-
-  const steps = [
-    // HARD delete (various backends)
-    async ()=>{ await apiDelete(`/api/admin/quotes/${id}`);                 return 'hard'; },
-    async ()=>{ await apiPost(`/api/admin/quotes/${id}/delete`);            return 'hard'; },
-    async ()=>{ await apiDelete(`/api/quotes/${id}`);                        return 'hard'; },
-    async ()=>{ await apiPost(`/api/admin/quotes/${id}?_method=DELETE`);     return 'hard'; }, // method override
-
-    // SOFT delete flags (if your model supports `deleted`)
-    async ()=>{ await api(`/api/admin/quotes/${id}`, {
-                    method:'PATCH', body: JSON.stringify({ deleted:true })
-                  }); return 'soft'; },
-
-    // ARCHIVE via status (always our last resort)
-    async ()=>{ await api(`/api/admin/quotes/${id}`, {
-                    method:'PATCH', body: JSON.stringify({ status:'cancelled' })
-                  }); return 'archived'; },
-    async ()=>{ await api(`/api/admin/quotes/${id}/status`, {
-                    method:'PATCH', body: JSON.stringify({ status:'cancelled' })
-                  }); return 'archived'; },
-  ];
-
-  for (const step of steps){
-    try { mode = await step(); break; }
-    catch(e){ lastErr = e; }
-  }
-
-  if (!mode){
-    console.error('Delete failed for quote', id, lastErr);
-    toastMsg('Suppression impossible (voir console)');
-    return;
-  }
-
-  closeDrawer();
-  await load();
-  toastMsg(mode === 'hard' ? 'Devis supprimé' :
-           mode === 'soft' ? 'Devis marqué supprimé' :
-                             'Devis archivé (statut “Annulé”)');
-}
-
-els.saveStatus.addEventListener('click', saveQuoteStatus);
-els.dStatus.addEventListener('change', () => { els.saveMsg.textContent = ''; });
 
 /* ---------- Boot ---------- */
 (async function start(){
