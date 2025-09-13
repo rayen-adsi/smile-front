@@ -203,6 +203,46 @@
     .kpi b{ font-size: 18px; }
     .kpi small{ font-size: 11px; }
   }
+  /* Row now has a dedicated last column for actions */
+.rowcard{
+  display:grid;
+  grid-template-columns: auto 1fr .8fr .6fr max-content auto; /* +actions col */
+  gap:10px; align-items:center;
+  padding:12px; background:#fff; border:1px solid var(--gray); border-radius:14px;
+  transition:box-shadow .15s ease,transform .02s;
+}
+
+/* Small action button that sits in the last column */
+.icon-hide{
+  border:1px solid var(--gray);
+  background:#fff;
+  border-radius:10px;
+  padding:6px 8px;
+  cursor:pointer;
+  font-weight:800;
+  box-shadow:0 6px 18px rgba(0,0,0,.06);
+  justify-self:end;                 /* right edge of its column */
+}
+.icon-hide:hover{ background:#fee2e2; border-color:#fecaca; }
+
+/* Mobile: place the action in the “date” row area, right aligned */
+@media (max-width:680px){
+  .rowcard{
+    grid-template-columns:46px 1fr;
+    grid-template-areas:
+      "av name"
+      "av trt"
+      "av st"
+      "av dt";
+  }
+  .rowcard > :nth-child(1){ grid-area: av; }
+  .rowcard > :nth-child(2){ grid-area: name; }
+  .rowcard > :nth-child(3){ grid-area: trt; }
+  .rowcard > :nth-child(4){ grid-area: st; }
+  .rowcard > :nth-child(5){ grid-area: dt; }      /* date block */
+  .icon-hide{ grid-area: dt; justify-self:end; }  /* action shares the date row */
+}
+
 </style>
 </head>
 <body>
@@ -610,15 +650,20 @@ function renderRows(rows, opts = {}){
     dt.innerHTML = `<span class="note" title="${fmtDate(r.created_at)}">${relTime(r.created_at)}</span>`;
 
     // quick local hide button
-    const hide = document.createElement('button');
-    hide.className = 'icon-hide';
-    hide.textContent = '🗑️';
-    hide.title = 'Masquer (localement)';
-    hide.addEventListener('click', (e)=>{
-      e.stopPropagation();
-      currentId = r.id;
-      hideCurrentQuote();
-    });
+    // quick local hide button
+const hide = document.createElement('button');
+hide.className = 'icon-hide';       // <- not absolute; sits in its own grid column
+hide.textContent = '🗑️';
+hide.title = 'Masquer (localement)';
+hide.addEventListener('click', (e)=>{
+  e.stopPropagation();
+  currentId = r.id;
+  hideCurrentQuote();
+});
+
+// Append as the 6th child so it lands in the new actions column
+wrap.append(avatar, name, trt, st, dt, hide);
+
 
     wrap.append(avatar,name,trt,st,dt,hide);
     td.append(wrap); tr.append(td);
