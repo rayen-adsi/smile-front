@@ -402,6 +402,19 @@ async function apiDelete(path){
   // some APIs return 204 No Content; just return an object
   try { return await res.json(); } catch { return { ok:true }; }
 }
+async function apiPost(path, body){
+  const res = await fetch(BASE + path, {
+    method: 'POST',
+    headers: {
+      ...(token ? { Authorization: 'Bearer ' + token } : {}),
+      'Content-Type': 'application/json'
+    },
+    body: body ? JSON.stringify(body) : null
+  });
+  if (res.status === 401){ logout(); throw new Error('401'); }
+  if (!res.ok) throw new Error(await res.text());
+  try { return await res.json(); } catch { return { ok:true }; }
+}
 
 function resolveBase(){
   const p = new URLSearchParams(location.search);
@@ -783,31 +796,51 @@ async function saveQuoteStatus() {
 }
 async function deleteCurrentQuote(){
   if (!currentId) return;
-  const sure = confirm('Supprimer définitivement ce devis ? Cette action est irréversible.');
-  if (!sure) return;
+  if (!confirm('Supprimer définitivement ce devis ? Cette action est irréversible.\n(En cas d’échec, il sera archivé.)')) return;
 
-  try{
-    await apiDelete(`/api/admin/quotes/${currentId}`);
-    toastMsg('Devis supprimé');
-    closeDrawer();
-    await load();
-  }catch(err){
-    console.error('DELETE failed:', err);
-    // Optional fallback: if hard delete not supported, archive it by setting status=cancelled
-    try{
-      await api(`/api/admin/quotes/${currentId}`, {
-        method:'PATCH',
-        body: JSON.stringify({ status: 'cancelled' })
-      });
-      toastMsg('Endpoint DELETE indisponible — devis archivé (statut “Annulé”).');
-      closeDrawer();
-      await load();
-    }catch(e2){
-      console.error('Archive fallback failed:', e2);
-      alert('Suppression impossible. Vérifiez que l’API supporte DELETE /api/admin/quotes/:id');
-    }
+  const id = currentId;
+  let mode = null;  // 'hard' | 'soft' | 'archived'
+  let lastErr = null;
+
+  const steps = [
+    // HARD delete (various backends)
+    async ()=>{ await apiDelete(`/api/admin/quotes/${id}`);                 return 'hard'; },
+    async ()=>{ await apiPost(`/api/admin/quotes/${id}/delete`);            return 'hard'; },
+    async ()=>{ await apiDelete(`/api/quotes/${id}`);                        return 'hard'; },
+    async ()=>{ await apiPost(`/api/admin/quotes/${id}?_method=DELETE`);     return 'hard'; }, // method override
+
+    // SOFT delete flags (if your model supports `deleted`)
+    async ()=>{ await api(`/api/admin/quotes/${id}`, {
+                    method:'PATCH', body: JSON.stringify({ deleted:true })
+                  }); return 'soft'; },
+
+    // ARCHIVE via status (always our last resort)
+    async ()=>{ await api(`/api/admin/quotes/${id}`, {
+                    method:'PATCH', body: JSON.stringify({ status:'cancelled' })
+                  }); return 'archived'; },
+    async ()=>{ await api(`/api/admin/quotes/${id}/status`, {
+                    method:'PATCH', body: JSON.stringify({ status:'cancelled' })
+                  }); return 'archived'; },
+  ];
+
+  for (const step of steps){
+    try { mode = await step(); break; }
+    catch(e){ lastErr = e; }
   }
+
+  if (!mode){
+    console.error('Delete failed for quote', id, lastErr);
+    toastMsg('Suppression impossible (voir console)');
+    return;
+  }
+
+  closeDrawer();
+  await load();
+  toastMsg(mode === 'hard' ? 'Devis supprimé' :
+           mode === 'soft' ? 'Devis marqué supprimé' :
+                             'Devis archivé (statut “Annulé”)');
 }
+
 els.saveStatus.addEventListener('click', saveQuoteStatus);
 els.dStatus.addEventListener('change', () => { els.saveMsg.textContent = ''; });
 
