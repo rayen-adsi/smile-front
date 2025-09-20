@@ -1279,6 +1279,31 @@ const API_URL  = `${API_BASE}/api/quotes/multipart`;
     const label = input.closest('div')?.querySelector('label'); if(label) label.textContent = txt;
   };
 
+  /* ======== URL language helpers (adds /ar in the link) ======== */
+  const KNOWN_CODES = new Set(['fr','en','es','de','it','ar']);
+
+  function detectLangFromPath(){
+    const seg = location.pathname.split('/').filter(Boolean)[0];
+    return KNOWN_CODES.has(seg) ? seg : null;
+  }
+
+  function buildPathForLang(lang){
+    const segs = location.pathname.split('/').filter(Boolean);
+    // strip existing lang prefix if present
+    if (segs.length && KNOWN_CODES.has(segs[0])) segs.shift();
+    // default language keeps clean path (no prefix). Only prefix for non-defaults (here: ar/en/es/de/it)
+    const DEFAULT_LANG = 'fr';
+    if (lang !== DEFAULT_LANG) segs.unshift(lang);
+    const path = '/' + segs.join('/');
+    return path + location.search + location.hash;
+  }
+
+  function applyUrlLang(lang, replace=false){
+    const newUrl = buildPathForLang(lang);
+    const fn = replace ? 'replaceState' : 'pushState';
+    history[fn]({}, '', newUrl);
+  }
+
   /* ============ Apply language ============ */
   function apply(lang){
     const P = T[lang] || T.fr;
@@ -1340,20 +1365,9 @@ const API_URL  = `${API_BASE}/api/quotes/multipart`;
     const docCard = $('.r-card.doctor');
     if (docCard){
       setText('.r-card.doctor b', P.rDoctorTitle);
-      const lines = $('.r-card.doctor b').parentNode;
-      // replace the two following text nodes/line:
-      const p = $('.r-card.doctor .note').parentNode;
-      lines.childNodes[2].nodeValue = ''; // clear old
-      $('.r-card.doctor .note').textContent = P.rDoctorQuote;
-      // main line:
-      const textHolder = $('.r-card.doctor b').nextSibling;
-      if (textHolder && textHolder.nodeType===3) textHolder.nodeValue = ' ';
-      $('.r-card.doctor b').parentElement.childNodes.forEach(n=>{
-        /* noop, handled below with setText to a new element if needed */
-      });
-      // ensure main line text
       const afterB = $('.r-card.doctor b').parentElement.querySelector('br').nextSibling;
       if (afterB && afterB.nodeType===3) afterB.nodeValue = P.rDoctorLine + '\n';
+      $('.r-card.doctor .note').textContent = P.rDoctorQuote;
     }
     setText('.r-card:nth-of-type(2) > b', P.rGet);
     setList('.r-card:nth-of-type(2) ul', P.rGetList);
@@ -1365,7 +1379,6 @@ const API_URL  = `${API_BASE}/api/quotes/multipart`;
     setList('.r-card:nth-of-type(4) ol', P.rNextList);
 
     setText('.r-card:nth-of-type(5) .stars', P.stars);
-    // mini-reviews (order: SB, ML, AK) → r3, r2, r1 (to match your avatars)
     const rBoxes = document.querySelectorAll('.mini-reviews .review-mini .txt');
     if (rBoxes[0]) rBoxes[0].innerHTML = `<b>“${P['reviews.r3']}”</b>`;
     if (rBoxes[1]) rBoxes[1].innerHTML = `<b>“${P['reviews.r2']}”</b>`;
@@ -1395,7 +1408,10 @@ const API_URL  = `${API_BASE}/api/quotes/multipart`;
     // expose current strings for shims
     window.__I18N_Q = P;
 
-
+    // keep the URL in sync with the chosen language (adds /ar when Arabic is selected)
+    // fr = default (no prefix). Others are prefixed, e.g., /ar/...
+    // Use replaceState here to avoid polluting history when applying on init; on user clicks we use pushState (below).
+    applyUrlLang(lang, /*replace*/ true);
   }
 
   /* ====== Shim showMessage so existing code shows localized text ====== */
@@ -1463,6 +1479,8 @@ function setFabFlag(lang){
   b.onclick = ()=>{
     localStorage.setItem('quote_lang', l.code);
     apply(l.code);
+    // push a history entry on explicit user change (so shareable link shows /ar, etc.)
+    applyUrlLang(l.code, /*replace*/ false);
     setFabFlag(l.code);
     menu.querySelectorAll('button').forEach(x=> x.classList.toggle('active', x===b));
     document.getElementById('langFab').classList.remove('open');
@@ -1473,12 +1491,27 @@ function setFabFlag(lang){
   btn.addEventListener('click', ()=> document.getElementById('langFab').classList.toggle('open'));
   document.addEventListener('click', e=>{ const w=document.getElementById('langFab'); if(!w.contains(e.target)) w.classList.remove('open'); });
 
-  // init
-  const saved = localStorage.getItem('quote_lang') || (navigator.language||'fr').slice(0,2);
-  const init = LANGS.find(x=>x.code===saved) ? saved : 'fr';
-  apply(init);
+  // init: prefer URL (/ar, /en, ...) then localStorage, then navigator
+  const urlLang = detectLangFromPath();
+  const saved = localStorage.getItem('quote_lang');
+  const navLang = (navigator.language||'fr').slice(0,2);
+  const pick = urlLang || saved || navLang;
+  const init = KNOWN_CODES.has(pick) ? pick : 'fr';
+  apply(init); // will also set URL (replaceState) to keep in sync with our rule
   setFabFlag(init);
   menu.querySelectorAll('button').forEach(x=> x.classList.toggle('active', x.dataset.code===init));
+
+  // Keep app reacting if user navigates history where only lang prefix changes
+  window.addEventListener('popstate', ()=>{
+    const again = detectLangFromPath() || 'fr';
+    // avoid loops: only re-apply if different from current
+    if ((document.documentElement.lang||'fr') !== again){
+      localStorage.setItem('quote_lang', again);
+      apply(again);
+      setFabFlag(again);
+      menu.querySelectorAll('button').forEach(x=> x.classList.toggle('active', x.dataset.code===again));
+    }
+  });
 })();
 </script>
 
